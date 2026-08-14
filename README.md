@@ -119,4 +119,4 @@ After `./publish_jllama`, loads resolve under:
 
 ## License
 
-TBD.
+[MIT](LICENSE) — Copyright (c) 2026 Tom McGuire.

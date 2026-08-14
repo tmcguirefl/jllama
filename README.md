@@ -7,8 +7,10 @@ jllama loads a Llama-architecture GGUF (F16/F32), tokenizes a prompt, runs prefi
 ## Requirements
 
 - **J 9.8** with jconsole at a full path (on macOS typically `/Applications/j9.8/bin/jconsole`). Do not use bare `jconsole` if that resolves to the Java tool.
-- A **Llama** GGUF (`general.architecture=llama`) in **F16** or **F32** (quantized GGUFs are not supported yet).
-- Enough RAM for F16→**float64** weights in J (roughly 4× the F16 file size for the weight tensors, plus activations/KV).
+- A **Llama** GGUF (`general.architecture=llama`) in **F16** or **F32**. **Quantized GGUFs (Q4/Q5/Q8, …) are not supported in this version** — you need an F16 (or F32) file.
+- Enough RAM for F16→**float64** weights in J (roughly 4× the F16 file size for the weight tensors, plus activations/KV). Which Llama-3-architecture models you can load depends on **your** machine’s memory, not only on the GGUF file size on disk.
+
+This tree was developed and run on a **MacBook Pro with 32 GB RAM**. On that class of machine, **~1B F16** is a practical upper lab size in pure J f64; **7B+ F16** is not realistic here without quant or an external backend. On less RAM, prefer smaller F16 models (e.g. TinyStories ~15M).
 
 ## Setup
 
@@ -92,12 +94,10 @@ Use either `-p` or `-f` for the prompt.
 | Supported | Not in this tree |
 |-----------|------------------|
 | `general.architecture=llama` dense models | Other GGUF arches (Qwen, Gemma, …) |
-| F16 / F32 weights | Quant (Q4/Q5/Q8, …) |
+| F16 / F32 weights only | Quant (Q4/Q5/Q8, …) — not in this version |
 | MHA and GQA (`n_head_kv`) | GPU / Metal backends |
 | RMSNorm, RoPE (NORMAL), SwiGLU | Chat templates / GBNF |
 | Greedy and temp / top-k / top-p sampling | Training, server mode |
-
-On a 32 GB machine, **~1B F16** is a practical upper lab size in pure J f64; **7B+ F16** is not realistic without quant or an external backend.
 
 ## Runtime layout
 

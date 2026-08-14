@@ -8,7 +8,7 @@ NB.           sftmax make2d RMS_EPS MASK_VAL ATOL RTOL
 NB.
 NB. Matrix product is not wrapped — use  +/ . *  at call sites.
 NB.
-NB. Layout (see docs/conventions.md):
+NB. Layout:
 NB.   activations: n_tok x n_embd  (or 1D n_embd)
 NB.   linear W:    n_in  x n_out   with  x +/ . * w
 NB.   softmax:     vector full; table per row (1-cells)

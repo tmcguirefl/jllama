@@ -97,7 +97,7 @@ Use either `-p` or `-f` for the prompt.
 | RMSNorm, RoPE (NORMAL), SwiGLU | Chat templates / GBNF |
 | Greedy and temp / top-k / top-p sampling | Training, server mode |
 
-On a 32 GB machine, **~1B F16** is a practical upper lab size in pure J f64; **7B+ F16** is not realistic without quant or an external backend. See [docs/hardware.md](docs/hardware.md).
+On a 32 GB machine, **~1B F16** is a practical upper lab size in pure J f64; **7B+ F16** is not realistic without quant or an external backend.
 
 ## Runtime layout
 
@@ -108,7 +108,6 @@ sysutils.ijs       ROOT, setroot, jrequire*, VERSION (locale jllamasys)
 cli/cli.ijs        argv parse + generate driver (locale jllamacli)
 core/              tensor, rope, attention, block, sample, model
 io/                GGUF loader, vocab (BPE / Llama SPM)
-docs/              hardware, models, milestones, conventions
 models/            your GGUFs (not shipped; see models/.gitignore)
 ```
 

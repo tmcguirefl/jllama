@@ -1,0 +1,11 @@
+# Local / OS
+.DS_Store
+*.swp
+.claude/
+/tmp/
+
+# Models (download separately; large)
+models/**
+!models/.gitignore
+
+# Published J user temp is outside this tree

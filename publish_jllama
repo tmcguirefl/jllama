@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# Publish jllama load files to J user temp: jpath '~temp/jllama/...'
+# So scripts can  load jpath '~temp/jllama/core/tensor.ijs'  outside explicit defs.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+JCONSOLE="${JCONSOLE:-/Applications/j9.8/bin/jconsole}"
+
+if [[ ! -x "$JCONSOLE" ]]; then
+  echo "publish_jllama: jconsole not found: $JCONSOLE" >&2
+  exit 127
+fi
+
+DEST="$("$JCONSOLE" <<'EOF'
+smoutput jpath '~temp/jllama'
+2!:55 ] 0
+EOF
+)"
+# jconsole may print a trailing CR or blank lines
+DEST="$(printf '%s' "$DEST" | tr -d '\r' | awk 'NF{print; exit}')"
+
+if [[ -z "$DEST" ]]; then
+  echo "publish_jllama: could not resolve jpath '~temp/jllama'" >&2
+  exit 1
+fi
+
+echo "publish_jllama: $ROOT -> $DEST"
+
+mkdir -p "$DEST/core" "$DEST/io" "$DEST/cli"
+
+copy() {
+  local rel="$1"
+  local src="$ROOT/$rel"
+  local dst="$DEST/$rel"
+  if [[ ! -f "$src" ]]; then
+    echo "publish_jllama: missing $src" >&2
+    exit 1
+  fi
+  mkdir -p "$(dirname "$dst")"
+  cp -f "$src" "$dst"
+  echo "  $rel"
+}
+
+# Bootstrap + engine + CLI (runtime surface)
+copy sysutils.ijs
+copy jllama_cli.ijs
+copy core/tensor.ijs
+copy core/rope.ijs
+copy core/attention.ijs
+copy core/block.ijs
+copy core/sample.ijs
+copy core/model.ijs
+copy io/gguf.ijs
+copy io/vocab.ijs
+copy cli/cli.ijs
+
+# Keep shebang CLI executable when published
+chmod +x "$DEST/jllama_cli.ijs" 2>/dev/null || true
+
+# Stamp for debugging
+{
+  echo "published_from=$ROOT"
+  echo "published_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  if command -v git >/dev/null 2>&1 && git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "git_head=$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || true)"
+  fi
+} > "$DEST/PUBLISHED.txt"
+
+echo "publish_jllama: done"
+echo "  load jpath '~temp/jllama/sysutils.ijs'"

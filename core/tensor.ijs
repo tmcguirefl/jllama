@@ -67,21 +67,13 @@ NB. ---------------------------------------------------------------
 NB. Linear + mask
 NB. ---------------------------------------------------------------
 
-NB. Affine map.
-NB.   linear x;w        -> x +/ . * w
-NB.   linear x;w;b      -> b +"1 x +/ . * w
-NB. x: n_tok x n_in   w: n_in x n_out   b: n_out
+NB. Affine map: always x ; w ; b  (no-bias callers pass b = 0).
+NB.   linear x;w;b  ->  b +"1 x +/ . * w
+NB. x: n_tok x n_in   w: n_in x n_out   b: n_out (or scalar 0)
 linear =: 3 : 0
-  n =. # y
-  if. n = 2 do.
-    'xv wv' =. y
-    xv +/ . * wv
-  elseif. n = 3 do.
-    'xv wv bv' =. y
-    bv +"1 xv +/ . * wv
-  elseif. do.
-    'linear expects x;w or x;w;b' assert 0
-  end.
+  'linear expects x;w;b' assert 3 = # y
+  'xv wv bv' =. y
+  bv +"1 xv +/ . * wv
 )
 
 NB. Causal attention mask (n x n).

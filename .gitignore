@@ -1,11 +1,45 @@
-# Local / OS
+# --- OS / editor ---
 .DS_Store
+Thumbs.db
+*~
 *.swp
-.claude/
-/tmp/
+*.swo
+.idea/
+.vscode/
+*.code-workspace
 
-# Models (download separately; large)
+# --- local AI / agent state (never ship) ---
+.claude/
+.cursor/
+
+# --- scratch ---
+/tmp/
+*.tmp
+*.log
+
+# --- model weights (download separately; large) ---
+# Keep models/ in the tree via models/.gitignore; ignore GGUFs and caches.
 models/**
 !models/.gitignore
+*.gguf
+*.GGUF
 
-# Published J user temp is outside this tree
+# --- J local artifacts (if created under the clone) ---
+*.ijx
+*.ijs~
+user/
+
+# --- language tool caches (if any helpers appear later) ---
+__pycache__/
+*.py[cod]
+.Python
+.ruff_cache/
+.mypy_cache/
+
+# --- secrets / local env ---
+.env
+.env.*
+!.env.example
+
+# Note (beta+): when we add manifest.ijs for J pacman "install" into
+# j9.8/addons/, that file should be tracked — do not ignore it.

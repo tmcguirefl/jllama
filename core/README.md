@@ -17,7 +17,7 @@ Array ops and transformer math.
 
 Load into the caller’s locale (`load jpath '~temp/jllama/core/tensor.ijs'` after `./publish_jllama`).
 
-`silu` `sftmax` `softmax` `rmsnorm` `linear` `causal_mask` `allclose`
+`silu` `softmax` `rmsnorm` `linear` `causal_mask` `allclose`
 
 Matrix product is not wrapped — use `+/ . *` at call sites.
 

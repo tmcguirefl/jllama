@@ -4,14 +4,14 @@ NB.   cocurrent 'myloc'
 NB.   load jpath '~temp/jllama/core/tensor.ijs'
 NB.
 NB. Defines: silu softmax rmsnorm linear causal_mask allclose
-NB.           sftmax make2d RMS_EPS MASK_VAL ATOL RTOL
+NB.           make2d RMS_EPS MASK_VAL ATOL RTOL
 NB.
 NB. Matrix product is not wrapped — use  +/ . *  at call sites.
 NB.
 NB. Layout:
 NB.   activations: n_tok x n_embd  (or 1D n_embd)
 NB.   linear W:    n_in  x n_out   with  x +/ . * w
-NB.   softmax:     vector full; table per row (1-cells)
+NB.   softmax:     per 1-cell (vector full; table per row)
 
 NB. ---------------------------------------------------------------
 NB. Constants
@@ -41,11 +41,9 @@ NB. ---------------------------------------------------------------
 NB. SiLU / swish: x * sigmoid(x) = x % (1 + exp(-x))
 silu =: ] % 1 + ^@:-
 
-NB. Softmax — stable, last-axis for tables.
-NB. sftmax: vector (hooks fill both sides of dyads from y)
-sftmax =: 13 : '(% +/)(^(- >./)y)'
-NB. rank 1 -> sftmax; otherwise sftmax per row
-softmax =: sftmax`(sftmax"1)@.(1&~:@#@$)
+NB. Softmax — stable, per 1-cell (picoGPT-in-J style).
+NB. Works for vectors and tables (including 1 x N).
+softmax =: {{ (% +/) ^ (- >./) y }}"1
 
 NB. RMSNorm (Llama-style).
 NB. Dyadic:  weight rmsnorm x

@@ -45,23 +45,18 @@ NB. Softmax — stable, per 1-cell (picoGPT-in-J style).
 NB. Works for vectors and tables (including 1 x N).
 softmax =: {{ (% +/) ^ (- >./) y }}"1
 
-NB. RMSNorm (Llama-style).
-NB. Dyadic:  weight rmsnorm x
-NB.   weight: length n_embd
-NB.   x:      n_embd  or  n_tok x n_embd
-NB.   out:    same shape as x
-NB. eps = RMS_EPS (1e_5 default; Llama often 1e-5)
-rmsnorm =: 4 : 0
-  w =. x
-  if. 1 = #$y do.
-    ms =. (+/ % #) *: y
-    w * y % %: ms + RMS_EPS
-  else.
-    NB. ms is one scalar per row; divide with rank %"1 0
-    ms =. (+/ % #)"1 *: y
-    w *"1 y %"1 0 %: ms + RMS_EPS
-  end.
-)
+NB. RMSNorm (Llama-style), per 1-cell — same pattern as softmax"1.
+NB. Dyadic:  weight rmsnorm activations
+NB.   x (left):  weight/gain vector, length n_embd
+NB.              (ggml/llama.cpp: attn_norm / ffn_norm / output_norm .weight)
+NB.   y (right): n_embd  or  n_tok x n_embd
+NB.   out:       same shape as y
+NB. eps = RMS_EPS (1e_5; Llama often 1e-5)
+rmsnorm =: {{
+  NB. x = RMSNorm weight (gain), length n_embd — not reassigned; used as left arg
+  ms =. (+/ % #) *: y
+  x * y % %: ms + RMS_EPS
+}}"1
 
 NB. ---------------------------------------------------------------
 NB. Linear + mask
